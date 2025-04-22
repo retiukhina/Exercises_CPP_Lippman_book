@@ -1,5 +1,8 @@
 #include <iostream>
 
+/* Rewrite the program 1_4 to use
+a separate statement to print each operand. */
+
 int main()
 {
 	int v1 = 0, v2 = 0;

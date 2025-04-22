@@ -1,5 +1,7 @@
 #include <iostream>
 
+/* Exercise 1.4: Write a program that uses the multiplication operator, *, to print the product instead.*/
+
 int main()
 {
 	int v1 = 0, v2 = 0;
