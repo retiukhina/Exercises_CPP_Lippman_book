@@ -33,9 +33,11 @@ In addition to being able to define variables of type Sales_item, we can:
 • Use the input (>>) and output (<<) operators to read and write objects of
 type Sales_item.
 • Use the assignment operator (=) to assign one Sales_item object to another.
-• Use the addition operator (+) to add two Sales_item objects. The two ob-
-jects must refer to the same ISBN. The result is a new Sales_item object
-whose ISBN is that of its operands and whose number sold and revenue are
-the sum of the corresponding values in its operands.
-• Use the compound assignment operator (+=) to add one Sales_item object
-into another.
+• Use the addition operator (+) to add two Sales_item objects. The two objects must refer to the same ISBN. The result is a new Sales_item object whose ISBN is that of its operands and whose number sold and revenue are the sum of the corresponding values in its operands.
+• Use the compound assignment operator (+=) to add one Sales_item object into another.
+
+## What Is a Member Function?
+
+A member function is a function that is defined as part of a class. Member functions are sometimes referred to as methods. Ordinarily, we call a member function on behalf of an object. For example, the first part of the left-hand operand of the equality expression `item1.isbn` uses the dot operator (the “.” operator) to say that we want “the isbn member of the object named item1.”
+
+

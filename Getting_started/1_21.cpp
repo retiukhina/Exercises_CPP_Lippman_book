@@ -1,5 +1,8 @@
 #include "Sales_item.h"
 
+/* Exercise 1.21: Write a program that reads two Sales_item objects that have the
+same ISBN and produces their sum. */
+
 int main()
 {
 	Sales_item item1, item2;
@@ -13,6 +16,7 @@ int main()
 		else
 		{
 			std::cout << "Enter two transaction for the same ISBN" << std::ends;
+			return -1;
 		}
 	}
 	return 0;

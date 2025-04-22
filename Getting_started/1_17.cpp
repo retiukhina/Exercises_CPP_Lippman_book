@@ -1,6 +1,6 @@
 #include  <iostream>
 
-/* use an if to write a program to count how many consecutive times
+/* Exercise 1.17: use an if to write a program to count how many consecutive times
 each distinct value appears in the input */
 
 int main()

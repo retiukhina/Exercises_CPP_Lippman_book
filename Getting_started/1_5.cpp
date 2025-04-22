@@ -1,7 +1,6 @@
 #include <iostream>
 
-/* Rewrite the program 1_4 to use
-a separate statement to print each operand. */
+/* Exercise 1.5: Rewrite the program 1_4 to use a separate statement to print each operand. */
 
 int main()
 {
