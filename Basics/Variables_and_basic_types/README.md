@@ -1,3 +1,5 @@
+# Data types
+
 Data types determine the meaning of the data and operations in our programs.
 
 C++ defines a set of primitive types that include the `arithmetic types` and a special type named `void`. The arithmetic types represent `characters`, `integers`, `boolean` values, and `floating-point numbers`. The `void` type has no associated values and can be used in only a few circumstances, most commonly as the return type for functions that do not return a value.
@@ -24,3 +26,33 @@ use. A few rules of thumb can be useful in deciding which type to use:
 
 Programs usually should avoid implementation-defined behavior, such as assuming that the size of an `int` is a fixed and known value. Such programs are said to be nonportable. When the program is moved to another machine, code that
 relied on implementation-defined behavior may fail. Tracking down these sorts of problems in previously working programs is, mildly put, unpleasant.
+
+# Initialization
+
+Initialization and assignment are different operations in C++. Initialization is not assignment. Initialization happens when a variable
+is given a value when it is created. Assignment obliterates an object’s current value and replaces that value with a new one.
+
+## List initialization
+
+From C++ 11 we can use any of the following four different ways to define an int variable named units_sold and
+initialize it to 0:
+
+`int units_sold = 0;`
+`int units_sold = {0};`
+`int units_sold{0};`
+`int units_sold(0);`
+
+The generalized use of curly braces for initialization was introduced as part of the new standard. This form of initialization previously had been allowed only in more restricted ways. This form of initialization is referred to as list initialization. Braced lists of initializers can now
+be used whenever we initialize an object and in some cases when we assign a new value to an object.
+
+When used with variables of built-in type, this form of initialization has one important property: The compiler will not let us list initialize variables of built-in type if the initializer might lead to the loss of information:
+`long double ld = 3.1415926536;`
+`int a{ld}, b = {ld};` // error: narrowing conversion required
+`int c(ld), d = ld;` // ok: but value will be truncated
+The compiler rejects the initializations of a and b because using a long double to
+initialize an int is likely to lose data. At a minimum, the fractional part of ld will
+be truncated. In addition, the integer part in ld might be too large to fit in an int.
+
+## Default initialization
+
+Uninitialized objects of built-in type defined inside a function body have undefined value, outside - initiaized to 0. Objects of class type that we do not explicitly initialize have a value that is defined by the class.
