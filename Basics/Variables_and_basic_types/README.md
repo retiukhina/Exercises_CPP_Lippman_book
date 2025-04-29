@@ -42,8 +42,7 @@ initialize it to 0:
 `int units_sold{0};`
 `int units_sold(0);`
 
-The generalized use of curly braces for initialization was introduced as part of the new standard. This form of initialization previously had been allowed only in more restricted ways. This form of initialization is referred to as list initialization. Braced lists of initializers can now
-be used whenever we initialize an object and in some cases when we assign a new value to an object.
+The generalized use of curly braces for initialization was introduced as part of the new standard. This form of initialization previously had been allowed only in more restricted ways. This form of initialization is referred to as `list initialization`. Braced lists of initializers can now be used whenever we initialize an object and in some cases when we assign a new value to an object.
 
 When used with variables of built-in type, this form of initialization has one important property: The compiler will not let us list initialize variables of built-in type if the initializer might lead to the loss of information:
 `long double ld = 3.1415926536;`
@@ -56,3 +55,66 @@ be truncated. In addition, the integer part in ld might be too large to fit in a
 ## Default initialization
 
 Uninitialized objects of built-in type defined inside a function body have undefined value, outside - initiaized to 0. Objects of class type that we do not explicitly initialize have a value that is defined by the class.
+
+# Static typing
+
+C++ is a statically typed language, which means that types are checked at compile time. The process by which types are checked is referred to as type checking. In C++, the compiler checks whether the operations we write are supported
+by the types we use. If we try to do things that the type does not support, the compiler
+generates an error message and does not produce an executable file. Static type checking can help
+find bugs.
+
+
+# Identifiers
+
+The identifiers we define in our own programs may not contain two consecutive underscores, nor can an identifier begin with an underscore followed immediately by an uppercase letter. In addition, identifiers defined outside a function may not begin with an underscore.
+
+# Scope of a name
+
+The global scope is a scope of accessability outside of the function. The block scope is a scope of accessability within a block of a function or statement (for example for loop).
+
+int reused = 42;
+// reused has global scope
+
+int main()
+{
+    int unique = 0; // unique has block scope
+    // output #1: uses global reused; prints 42 0
+    std::cout << reused << " " << unique << std::endl;
+    int reused = 0; // new, local object named reused hides global reused
+    // output #2: uses local reused; prints 0 0
+    std::cout << reused << " " << unique << std::endl;
+    // output #3: explicitly requests the global reused; prints 42 0
+    std::cout << ::reused << " " << unique << std::endl;
+    return 0;
+}
+
+`::` scope operator (§ 1.2, p. 8) used to override the default scoping rules. The global scope has no name. Hence, when the scope operator has an empty left-hand side, it is a request to fetch the name on the right-hand side from the global scope.
+
+# Compound types
+
+A compound type is a type that is defined in terms of another type. C++ has several compound types, two of which—references and pointers.
+
+`A declaration` is a base type followed by a list of declarators. Each declarator names a variable and gives the
+variable a type that is related to the base type.
+
+## References
+
+The C++11 standard introduced a new kind of reference: an `“rvalue reference”`. These references are primarily intended for use inside classes. Technically speaking, when we use the term reference, we mean `“lvalue reference.”`
+
+A `reference` defines an alternative name for an object. A reference type “refers to” another type. We define a `reference type` by writing a declarator of the form &d, where d is the name being declared:
+
+int ival = 1024;
+int &refVal = ival; // refVal refers to (is another name for) ival
+int &refVal2; // error: a reference must be initialized
+
+Ordinarily, when we initialize a variable, the value of the initializer is copied into the object we are creating. When we define a reference, instead of copying the initializer’s value, we bind the reference to its initializer. Once initialized, a reference remains bound to its initial object. There is no way to rebind a reference to refer to
+a different object. Because there is no way to rebind a reference, references must be initialized.
+
+!! A `reference` is not an object. Instead, a `reference` is just another name for an already existing object.
+After a `reference` has been defined, all operations on that `reference` are actually operations on the object to which the reference is bound.
+
+!! Because references are not objects, we may not define a reference to a reference.
+
+With two exceptions, the type of a reference and the object to which the reference refers must match exactly.
+Moreover, a reference may be bound only to an object, not to a literal or to the result of a more general expression.
+
