@@ -1,4 +1,4 @@
-#include "Sales_item.h"
+#include "../includes/Sales_item.h"
 
 /* Exercise 1.20: Use Sales_item.h to write a program that reads a set of book sales transactions,
 writing each transaction to the standard output.*/

@@ -1,4 +1,4 @@
-#include "Sales_item.h"
+#include "../includes/Sales_item.h"
 
 /*Exercise 1.23: Write a program that reads several transactions and counts how many
 transactions occur for each ISBN .*/

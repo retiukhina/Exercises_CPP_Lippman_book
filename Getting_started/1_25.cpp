@@ -1,4 +1,4 @@
-#include "Sales_item.h"
+#include "../includes/Sales_item.h"
 
 /* The bookstore program reads a file of sales transactions and produces a report that shows, for each book,
 the total number of copies sold, the total revenue, and the average sales price. We’ll assume

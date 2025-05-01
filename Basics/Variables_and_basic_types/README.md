@@ -270,6 +270,64 @@ When we define several variables in the same statement, it is important to remem
 `auto &m = ci, *p = &ci;` // m is a const int&; p is a pointer to const int
 `auto &n = i, *p2 = &ci;` // error: type deduced from i is int; type deduced from &ci is const int
 
+## The decltype Type Specifier
 
+The C++11introduced a second type specifier, `decltype`, which returns the type of its operand.
 
+The compiler analyzes the expression to determine its type but does not evaluate the expression:
+`decltype(f()) sum = x; `// sum has whatever type f returns
 
+The way `decltype`handles top-level const and references differs subtly from
+the way `auto` does. When the expression to which we apply decltype is a variable, decltype returns the type of that variable, including top-level const and references:
+
+`const int ci = 0, &cj = ci;`
+`decltype(ci) x = 0;` // `x` has type `const int`
+`decltype(cj) y = x;` // `y` has type `const int&` and is bound to `x`
+`decltype(cj) z;` // error: z is a reference and must be initialized
+
+### decltype and References
+
+Some expressions will cause `decltype` to yield a reference type. Generally speaking, `decltype` returns a reference type for expressions that yield objects that can stand on the left-hand side of the assignment:
+
+// decltype of an expression can be a reference type
+`int i = 42, *p = &i, &r = i;`
+`decltype(r + 0) b;` // ok: addition yields an int; b is an (uninitialized) int
+`decltype(*p) c;` // error: c is `int&` and must be initialized
+
+When we dereference the pointer p using *p, you are accessing the value stored at the memory location that p is pointing to. Here’s the key part: *p doesn't give you an int value directly. It gives you the lvalue that p points to. Since p is a pointer to int, *p is of type int&, a reference to int, not just an int.
+
+When we apply decltype to a variable without any parentheses, we get the type of that variable. If we wrap the variable’s name in one or more sets of parentheses, the compiler will evaluate the operand as an expression.
+
+// decltype of a parenthesized variable is always a reference
+`decltype((i)) d;` // error: d is int& and must be initialized
+`decltype(i) e;` // ok: e is an (uninitialized) int
+
+!! Remember that decltype((variable)) (note, double parentheses) is always a reference type, but decltype(variable) is a reference type only if variable is a reference.
+
+# Defining our own data strustures
+
+We’ll define our class as follows:
+
+struct Sales_data {
+	std::string bookNo;
+	unsigned units_sold = 0;
+	double revenue = 0.0;
+};
+
+The names defined inside the class must be unique within the class but can reuse names defined outside the class.
+
+! Bad practice:  defining a variable immediately after the class, like this:
+
+class MyClass {
+    // class members
+} myObject;  // ← defining an object at the same time
+
+myObject is an instance of MyClass, declared as part of the class sstatement. This can confuse readers, making them think that `myObject` is part of the class, when it's just a global variable defined right after it.
+
+## Class Data Members
+
+The class body defines the members of the class. Our class has only `data members`.
+
+The data members of a class define the contents of the objects of that class type. Each object has its own copy of the class data members. Modifying the data members of one object does not change the data in any other Sales_data object. We define data members the same way that we define normal variables: We specify a base type followed by a list of one or more declarators.
+
+Under C++11 we can supply an `in-class initializer` for a data member. It is a way to give a data member of a class a default value directly in its declaration inside the class definition.
