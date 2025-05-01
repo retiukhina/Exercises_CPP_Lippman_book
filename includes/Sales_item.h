@@ -65,22 +65,19 @@ public:
     std::string isbn() const { return bookNo; }
     double avg_price() const;
 // private members as before
-private:
-    std::string bookNo;      // implicitly initialized to the empty string
+private: std::string bookNo;      // implicitly initialized to the empty string
     unsigned units_sold = 0; // explicitly initialized
     double revenue = 0.0;
 };
 
 // used in chapter 10
-inline
-bool compareIsbn(const Sales_item &lhs, const Sales_item &rhs)
+inline bool compareIsbn(const Sales_item &lhs, const Sales_item &rhs)
 { return lhs.isbn() == rhs.isbn(); }
 
 // nonmember binary operator: must declare a parameter for each operand
 Sales_item operator+(const Sales_item&, const Sales_item&);
 
-inline bool
-operator==(const Sales_item &lhs, const Sales_item &rhs)
+inline bool operator==(const Sales_item &lhs, const Sales_item &rhs)
 {
     // must be made a friend of Sales_item
     return lhs.units_sold == rhs.units_sold &&
@@ -88,8 +85,7 @@ operator==(const Sales_item &lhs, const Sales_item &rhs)
            lhs.isbn() == rhs.isbn();
 }
 
-inline bool
-operator!=(const Sales_item &lhs, const Sales_item &rhs)
+inline bool operator!=(const Sales_item &lhs, const Sales_item &rhs)
 {
     return !(lhs == rhs); // != defined in terms of operator==
 }
@@ -103,16 +99,14 @@ Sales_item& Sales_item::operator+=(const Sales_item& rhs)
 }
 
 // assumes that both objects refer to the same ISBN
-Sales_item
-operator+(const Sales_item& lhs, const Sales_item& rhs)
+Sales_item operator+(const Sales_item& lhs, const Sales_item& rhs)
 {
     Sales_item ret(lhs);  // copy (|lhs|) into a local object that we'll return
     ret += rhs;           // add in the contents of (|rhs|)
     return ret;           // return (|ret|) by value
 }
 
-std::istream&
-operator>>(std::istream& in, Sales_item& s)
+std::istream& operator>>(std::istream& in, Sales_item& s)
 {
     double price;
     in >> s.bookNo >> s.units_sold >> price;
@@ -124,8 +118,7 @@ operator>>(std::istream& in, Sales_item& s)
     return in;
 }
 
-std::ostream&
-operator<<(std::ostream& out, const Sales_item& s)
+std::ostream& operator<<(std::ostream& out, const Sales_item& s)
 {
     out << s.isbn() << " " << s.units_sold << " "
         << s.revenue << " " << s.avg_price();
