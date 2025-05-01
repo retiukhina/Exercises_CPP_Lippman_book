@@ -12,7 +12,7 @@ C++, like C, is designed to let programs get close to the hardware when necessar
 use. A few rules of thumb can be useful in deciding which type to use:
 • Use an `unsigned` type when you know that the values cannot be negative.
 • Use `int` for integer arithmetic. `short` is usually too small and, in practice, `long` often has the same size as `int`. If your data values are larger than the minimum guaranteed size of an int, then use `long long`.
-• Do not use plain `char` or `bool` in arithmetic expressions. Use them only to hold characters or truth values. Computations using char are especially problematic because `char` is `signed` on some machines and `unsigned ` on others. If you need a tiny integer, explicitly specify either `signed char` or `unsigned char`. 
+• Do not use plain `char` or `bool` in arithmetic expressions. Use them only to hold characters or truth values. Computations using char are especially problematic because `char` is `signed` on some machines and `unsigned ` on others. If you need a tiny integer, explicitly specify either `signed char` or `unsigned char`.
 • Use `double` for floating-point computations; `float` usually does not have enough precision, and the cost of double-precision calculations versus single-precision is negligible. In fact, on some machines, double-precision operations are faster than single. The precision offered by `long double` usually is unnecessary and often entails considerable run-time cost.
 
 
@@ -117,4 +117,159 @@ After a `reference` has been defined, all operations on that `reference` are act
 
 With two exceptions, the type of a reference and the object to which the reference refers must match exactly.
 Moreover, a reference may be bound only to an object, not to a literal or to the result of a more general expression.
+
+# Dealing with types
+
+## Type Aliases
+
+A type alias is a name that is a synonym for another type. Type aliases let us simplify complicated type definitions, making those types easier to use. Type aliases also let us emphasize the purpose for which a type is used.
+
+We can define a type alias in one of two ways. Traditionally, we use a `typedef`:
+
+`typedef double wages;` // wages is a synonym for double
+`typedef wages base, *p;` // base is a synonym for double, p for double*
+
+The keyword typedef may appear as part of the base type of a declaration. This means that you can write a declaration where the base type includes the typedef keyword, and instead of creating variables, you are defining a new name (alias) for an existing type.
+
+Example:
+
+`typedef unsigned int uint;`
+
+Now uint can be used anywhere you’d use unsigned int.
+
+If a declaration starts with typedef, it's not creating variables, it's creating new type names.
+
+Example:
+
+`typedef int* IntPtr;`
+
+This does not create a pointer. It defines IntPtr as a new name for the type int*.
+
+As in any other declaration, the declarators can include `type modifiers`  (like *, &, []) that define `compound types` built from the `base type` of the definition.
+
+Example:
+
+`typedef int* IntPtr;`
+
+    Base type: int
+    Declarator (*IntPtr) applies the pointer modifier
+    Result: IntPtr is an alias for int*
+
+Another example:
+
+`typedef char name[20];`
+
+    Base type: char
+    Declarator: name[20]
+    Result: name is a synonym for char[20]
+
+The C++11 standard introduced a second way to define a type alias, via an alias declaration:
+`using SI = Sales_item;` // SI is a synonym for Sales_item
+An alias declaration starts with the keyword `using` followed by the alias name and an =. The alias declaration defines the name on the left-hand side of the = as an alias for the type that appears on the right-hand side.
+
+### Pointers, const, and Type Aliases
+
+Declarations that use type aliases that represent compound types and const can yield surprising results.
+
+`typedef char *pstring;`
+`const pstring cstr = 0;` // cstr is a constant pointer to char
+`const pstring *ps;` // ps is a pointer to a constant pointer to char
+
+! `const pstring cstr = 0;` IS NOT equuiavelnt to `const char* cstr = 0;`
+
+
+`const char *` is a pointer to a const char, while `char * const` is a constant pointer to a char.
+
+The first, the value being pointed to can't be changed but the pointer can be. The second, the value being pointed at can change but the pointer can't (similar to a reference).
+
+When you write const pstring cstr, you're saying:
+    `cstr` is a `const` pstring → cstr is a `char* const`
+
+Thus:
+
+`const pstring cstr = 0;`
+→ is the same as:
+`char* const cstr = 0;`
+
+There is also a
+
+`const char * const`
+
+which is a constant pointer to a constant char (so nothing about it can be changed).
+
+Note:
+
+The following two forms are equivalent:
+
+`const char *`
+
+and
+
+`char const *`
+
+## The auto Type Specifier
+
+When we write a program, it can be surprisingly difficult—and sometimes even impossible—to determine the type of an expression. Under the C++11 standard, we can let the compiler figure out the type for us by using the auto type specifier. Unlike type specifiers, such as double, that name a specific type, auto tells the compiler to deduce the type from the initializer.
+
+By implication, a variable that uses auto as its type specifier must have an initializer:
+// the type of item is deduced from the type of the result of adding val1 and val2
+`auto item = val1 + val2;` // item initialized to the result of val1 + val2
+
+Because a declaration can involve only a single base type, the initializers for all the variables in the declaration must have types that are onsistent with each other:
+`auto i = 0, *p = &i;` // ok: i is int and p is a pointer to int
+`auto sz = 0, pi = 3.14;` // error: inconsistent types for sz and pi
+
+When we use a reference as an initializer, the initializer is the corresponding object. The compiler uses that object’s type for auto’s type deduction:
+`int i = 0, &r = i;`
+`auto a = r;` // a is an int (r is an alias for i, which has type int)
+
+`auto` ordinarily ignores top-level consts. As usual in initializations, low-level consts, such as when an initializer is a pointer to const, are kept:
+
+const int ci = i, &cr = ci;
+auto b = ci; // b is an int (top-level const in ci is dropped)
+auto c = cr; // c is an int (cr is an alias for ci whose const is top-level)
+auto d = &i; // d is an int* (& of an int object is int*)
+auto e = &ci; // e is const int* (& of a const object is low-level const)
+
+If we want the deduced type to have a top-level const, we must say so explicitly:
+
+`const auto f = ci;` // deduced type of ci is int; f has type const int
+
+We can also specify that we want a reference to the auto-deduced type. Normal initialization rules still apply:
+
+`const int ci = 42;`
+
+🔹 `auto &g = ci;`
+
+	✅ This works fine
+    ci is a const int
+    auto &g says: “g is a reference to ci”
+    So, g becomes a const int& (because auto deduces const int from ci)
+
+🧠 Key rule: When using auto with a reference, auto deduces the base type including const if the reference is initialized from a const.
+
+🔹 `auto &h = 42;`
+
+    ❌ Error — can't bind a non-const reference to a literal (like 42)
+    Why? Because:
+        auto deduces the type as int
+        So auto &h becomes int&
+        But you can't bind an int& (non-const) to a temporary literal like 42
+
+🛑 C++ doesn't allow binding a non-const reference to a temporary value.
+
+🔹 `const auto &j = 42;`
+
+    ✅ This is valid
+    auto deduces int
+    So const auto& becomes const int&
+    You can bind a const reference to a temporary (like 42), and it extends the lifetime of the temporary
+
+When we define several variables in the same statement, it is important to remember that a reference or pointer is part of a particular declarator and not part of the base type for the declaration. As usual, the initializers must provide consistent auto-deduced types:
+`auto k = ci, &l = i;` // k is int; l is int&
+`auto &m = ci, *p = &ci;` // m is a const int&; p is a pointer to const int
+`auto &n = i, *p2 = &ci;` // error: type deduced from i is int; type deduced from &ci is const int
+
+
+
 
