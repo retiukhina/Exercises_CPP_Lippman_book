@@ -21,3 +21,15 @@ Thus, the interface to `Sales_data` consists of the following operations:
 • A function named `add` to add two `Sales_data` objects
 • A read function to read data from an istream into a Sales_data object
 • A print function to print the value of a Sales_data object on an ostream
+
+# this
+
+`this` is a hidden pointer inside all non-static member functions.
+It points to the object the function was called on.
+It's how a member function knows which object’s data to access.
+Because this is intended to always refer to “this” object, this is a const
+pointer. We cannot change the address that this holds.
+
+# Introducing const Member Functions
+
+
