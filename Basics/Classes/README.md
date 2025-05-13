@@ -58,7 +58,7 @@ const member function:	const Sales_data *const this ->	pointer can't change, obj
 
 # Introducing const Member Functions
 
-std::string isbn() const { return bookNo; }
+`std::string isbn() const { return bookNo; }`
 
     Function definition:
 
@@ -180,4 +180,30 @@ double Sales_data::avg_price() const
 
 …it knows you’re inside Sales_data. So it lets you refer to member variables like revenue or units_sold directly — without writing this->revenue.
 
+# Constructor 
+
+A constructor is a special member function in a class that is automatically called when you create an object of that class.
+
+Its main job is to initialize the data members (variables inside the object).
+📌 Key Points:
+
+    It has the same name as the class.
+    It has no return type (not even void).
+    You can define multiple constructors with different parameters (called constructor overloading).
+    If you don’t write any constructor, C++ provides a default constructor for you.
+    Constructors have the same name as the class.
+    Unlike other functions, constructors have no return type. Like other functions, constructors have a (possibly
+    empty) parameter list and a (possibly empty) function body. 
+    A class can have multiple constructors. Like any other overloaded function, the constructors must differ from each other in the number or types of their parameters.
+    Unlike other member functions, constructors may not be declared as const. When we create a const object of a class type, the object does not assume its “constness” until after the constructor completes the object’s initialization. Thus, constructors can write to const objects during their construction.
+
+
+# Access Control and Encapsulation
+
+In C++ we use access specifiers to enforce encapsulation:
+
+• Members defined after a public specifier are accessible to all part of the program. The public members define the interface to the class.
+
+• Members defined after a private specifier are accessible only to the member functions of the same class. 
+Code outside the class cannot access it directly. The private sections encapsulate (i.e., hide) the implementation.
 
