@@ -187,15 +187,41 @@ A constructor is a special member function in a class that is automatically call
 Its main job is to initialize the data members (variables inside the object).
 📌 Key Points:
 
-    It has the same name as the class.
-    It has no return type (not even void).
-    You can define multiple constructors with different parameters (called constructor overloading).
-    If you don’t write any constructor, C++ provides a default constructor for you.
-    Constructors have the same name as the class.
-    Unlike other functions, constructors have no return type. Like other functions, constructors have a (possibly
-    empty) parameter list and a (possibly empty) function body. 
-    A class can have multiple constructors. Like any other overloaded function, the constructors must differ from each other in the number or types of their parameters.
-    Unlike other member functions, constructors may not be declared as const. When we create a const object of a class type, the object does not assume its “constness” until after the constructor completes the object’s initialization. Thus, constructors can write to const objects during their construction.
+   • It has the same name as the class.
+   • It has no return type (not even void).
+   • You can define multiple constructors with different parameters (called constructor overloading).
+   • If you don’t write any constructor, C++ provides a default constructor for you.
+   • Constructors have the same name as the class.
+   • Unlike other functions, constructors have no return type.      
+   • Like other functions, constructors have a (possibly empty) parameter list and a (possibly empty) function body. 
+   • A class can have multiple constructors. Like any other overloaded function, the constructors must differ from each other in the number or types of their parameters.
+   • Unlike other member functions, constructors may not be declared as const. When we create a const object of a class type, the object does not assume its “constness” until after the constructor completes the object’s initialization. Thus, constructors can write to const objects during their construction.
+
+   We often define several constructors — that is, several ways to create an object — to make the class flexible, easy to use, and suitable for different situations.
+
+✅ Use cases for each constructor
+
+1. `Sales_data()`
+Use when you want an empty/default object:
+
+`Sales_data d;`  // All values start at zero/default
+
+2. `Sales_data(const std::string &s)`
+Use when you only know the book’s ISBN, but not sales data yet:
+
+`Sales_data d("ISBN123");`
+
+3. `Sales_data(const std::string &s, unsigned n, double p)`
+Use when you want to create an object with full sales info:
+
+`Sales_data d("ISBN123", 10, 12.99);`  // 10 books sold at $12.99
+
+4. `Sales_data(std::istream &)`
+Use when you want to read data from the user or a file:
+
+`Sales_data d(std::cin);`  // Reads ISBN, quantity, and price
+
+
 
 
 # Access Control and Encapsulation
