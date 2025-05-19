@@ -29,13 +29,11 @@ relied on implementation-defined behavior may fail. Tracking down these sorts of
 
 # Initialization
 
-Initialization and assignment are different operations in C++. Initialization is not assignment. Initialization happens when a variable
-is given a value when it is created. Assignment obliterates an object’s current value and replaces that value with a new one.
+Initialization and assignment are different operations in C++. Initialization is not assignment. Initialization happens when a variable is given a value when it is created. Assignment obliterates an object’s current value and replaces that value with a new one.
 
 ## List initialization
 
-From C++ 11 we can use any of the following four different ways to define an int variable named units_sold and
-initialize it to 0:
+From C++ 11 we can use any of the following four different ways to define an int variable named units_sold and initialize it to 0:
 
 `int units_sold = 0;`
 `int units_sold = {0};`
@@ -58,11 +56,8 @@ Uninitialized objects of built-in type defined inside a function body have undef
 
 # Static typing
 
-C++ is a statically typed language, which means that types are checked at compile time. The process by which types are checked is referred to as type checking. In C++, the compiler checks whether the operations we write are supported
-by the types we use. If we try to do things that the type does not support, the compiler
-generates an error message and does not produce an executable file. Static type checking can help
+C++ is a statically typed language, which means that types are checked at compile time. The process by which types are checked is referred to as type checking. In C++, the compiler checks whether the operations we write are supported by the types we use. If we try to do things that the type does not support, the compiler generates an error message and does not produce an executable file. Static type checking can help
 find bugs.
-
 
 # Identifiers
 
@@ -94,8 +89,7 @@ int main()
 
 A compound type is a type that is defined in terms of another type. C++ has several compound types, two of which—references and pointers.
 
-`A declaration` is a base type followed by a list of declarators. Each declarator names a variable and gives the
-variable a type that is related to the base type.
+`A declaration` is a base type followed by a list of declarators. Each declarator names a variable and gives the variable a type that is related to the base type.
 
 ## References
 
@@ -115,8 +109,228 @@ After a `reference` has been defined, all operations on that `reference` are act
 
 !! Because references are not objects, we may not define a reference to a reference.
 
+### Reference Definitions
+
+We can define multiple references in a single definition. Each identifier that is a reference must be preceded by the & symbol:
+
+`int i = 1024, i2 = 2048;`// i and i2 are both ints
+`int &r = i, r2 = i2;` // r is a reference bound to i; r2 is an int
+`int i3 = 1024, &ri = i3;` // i3 is an int; ri is a reference bound to i3
+`int &r3 = i3, &r4 = i2;`// both r3 and r4 are references
+
 With two exceptions, the type of a reference and the object to which the reference refers must match exactly.
 Moreover, a reference may be bound only to an object, not to a literal or to the result of a more general expression.
+
+# Pointers
+
+A pointer is a compound type that “points to” another type. Like references, pointers are used for indirect access to other objects. Unlike a reference, a pointer is an object in its own right. Pointers can be assigned and copied; a single pointer can point to several different objects over its lifetime. Unlike a reference, a pointer
+need not be initialized at the time it is defined. Like other built-in types, pointers defined at block scope have undefined value if they are not initialized.
+
+We define a pointer type by writing a declarator of the form *d, where d is the name being defined. The * must be repeated for each pointer variable:
+`int *ip1, *ip2;` // both ip1 and ip2 are pointers to int
+`double dp, *dp2; `// dp2 is a pointer to double; dp is a double
+
+## Taking the Address of an Object
+
+A pointer holds the address of another object. We get the address of an object by using the address-of operator (the & operator):
+
+`int ival = 42;` // p holds the address of ival;
+`int *p = &ival;` // p is a pointer to ival;
+
+The second statement defines p as a pointer to int and initializes p to point to the int object named ival. Because references are not objects, they don’t have addresses. Hence, we may not define a pointer to a reference. With two exceptions, the types of the pointer and the object to which it points must match:
+
+`double dval;`
+`double *pd = &dval;` // ok: initializer is the address of a double
+`double *pd2 = pd;` // ok: initializer is a pointer to double
+`int *pi = pd;` // error: types of pi and pd differ
+`pi = &dval;` // error: assigning the address of a double to a pointer to int
+
+The types must match because the type of the pointer is used to infer the type of the object to which the pointer points. If a pointer addressed an object of another type, operations performed on the underlying object would fail.
+
+A pointer holds a memory address, and its value can be:
+
+1. Valid (points to an object) – it refers to actual data.
+2. One-past-the-end – it points just beyond an array or object (safe for comparison, not dereferencing).
+3. Null – it points to nothing (used to signal "no object").
+4. Invalid – it has a garbage or deleted address; using it leads to undefined behavior.
+
+### One-past-the-end Pointer
+In C++, a pointer is allowed to point to one element past the end of an array, but you must not dereference it (i.e., you cannot access the value at that address). This is mainly useful for loops and comparisons, especially with iterators.
+
+This feature helps in implementing generic algorithms like loops and iterators without needing special cases for the last element.
+
+✅ Example: Safe usage (comparison only)
+
+`#include <iostream>
+
+int main() {
+    int numbers[3] = {10, 20, 30};
+    int* begin = numbers;
+    int* end = numbers + 3; // one-past-the-end pointer
+
+    for (int* ptr = begin; ptr != end; ++ptr) {
+        std::cout << *ptr << std::endl;
+    }
+
+    return 0;
+}`
+
+## Using a Pointer to Access an Object
+
+When a pointer points to an object, we can use the dereference operator (the * operator) to access that object:
+
+`int &r2 = *p;` // r2 becomes an alias for the int value pointed to by p.
+
+## Null Pointers
+
+A null pointer does not point to any object. There are several ways to obtain a null pointer:
+
+`int *p1 = nullptr;` // equivalent to int *p1 = 0; (since C++11)
+`int *p2 = 0;` // directly initializes p2 from the literal constant 0
+// must #include cstdlib
+`int *p3 = NULL;` // equivalent to int *p3 = 0;
+
+nullptr is a literal that has a special type that can be converted to any other pointer type.
+
+
+Older programs sometimes use a preprocessor variable named NULL, which
+the cstdlib header defines as 0. Preprocessor variables are managed by the preprocessor, and are not part of the std namespace. As a result, we refer to them directly without the `std:: prefix.`
+When we use a preprocessor variable, the preprocessor automatically replaces the variable by its value. Hence, initializing a pointer to NULL is equivalent to initializing it to 0. Modern C++ programs generally should avoid using NULL and use nullptr instead.
+
+It is illegal to assign an int variable to a pointer, even if the variable’s value happens to be 0.
+
+int zero = 0;
+int* pi;
+pi = zero;  // ❌ ERROR: cannot assign int to int*
+
+! Under most compilers, when we use an uninitialized pointer, the bits in the memory in which the pointer resides are used as an address. Using an uninitialized pointer is a request to access a supposed object at that supposed location. There is no way to distinguish a valid address from an invalid one formed from the bits that happen to
+be in the memory in which the pointer was allocated.
+Our recommendation to initialize all variables is particularly important for pointers. If possible, define a pointer only after the object to which it should point has been defined. If there is no object to bind to a pointer, then initialize the pointer to nullptr or zero. That way, the program can detect that the pointer does not point to
+an object.
+
+## Pointers to Pointers
+
+We can store the address of a pointer in another pointer.
+We indicate each pointer level by its own *. That is, we write ** for a pointer to a pointer, *** for a pointer to a pointer to a pointer, and so on:
+
+`int ival = 1024;`
+`int *pi = &ival;` // pi points to an int
+`int **ppi = &pi;` // ppi points to a pointer to an int
+
+## References to Pointers
+
+A reference is not an object. Hence, we may not have a pointer to a reference.
+However, because a pointer is an object, we can define a reference to a pointer:
+`int i = 42;`
+`int *p;` // p is a pointer to int
+`int *&r = p;` // r is a reference to the pointer p
+`r = &i;` // r refers to a pointer; assigning &i to r makes p point to i
+`*r = 0;` // dereferencing r yields i, the object to which p points; changes i to 0
+
+It can be easier to understand complicated pointer or reference declara-
+tions if you read them from right to left.
+
+# const qualifier
+
+We can make a variable unchangeable by deﬁning the variable’s type as const:
+
+`const int bufSize = 512;` // input buffer size
+
+Because we can’t change the value of a const object after we create it, it must be initialized. As usual, the initializer may be an arbitrarily complicated expression:
+
+`const int i = get_size();` // ok: initialized at run time
+`const int j = 42;` // ok: initialized at compile time
+`const int k;` // error: k is uninitialized const
+
+## Ininitialization and const
+
+A const type can use most but not all of the same operations as its nonconst version. The one restriction is that we may use only those operations that cannot change an object. So, for example, we can use a
+const int in arithmetic expressions in exactly the same way as a plain, nonconst int. A const int converts to bool the same way as a plain int, and so on.
+Among the operations that don’t change the value of an object is initialization — when we use an object to initialize another object, it doesn’t matter whether either or both of the objects are consts:
+`int i = 42;`
+`const int ci = i;` // ok: the value in i is copied into ci
+`int j = ci;` // ok: the value in ci is copied into j
+
+## By Default, const Objects Are Local to a File
+
+In C++, a const variable has internal linkage by default. That means:
+
+It is only visible within the file where it is defined.
+It is not accessible from other .cpp files, even if you declare it in a header.
+(!It's only applied to variables, not to return types of functions and not to function parameters)
+
+If you write:
+
+// file1.cpp
+`const int bufSize = 512;`
+
+And then in another file:
+
+// file2.cpp
+`extern const int bufSize;`  // ❌ will cause linker error if bufSize is not defined here too
+
+This fails, because bufSize was only defined in file1.cpp, and by default, const variables are not shared between files (internal linkage).
+
+## extern and const
+
+Sometimes we have a const variable that we want to share across multiple files but whose initializer is not a constant expression.
+
+A constant expression is a value that the compiler can fully evaluate at compile time — it is known and fixed before the program runs.
+
+Examples of constant expressions:
+
+`const int x = 10;` // ✅ constant expression: 10 is known at compile time
+`const int y = 2 + 3 * 4;` // ✅ still a constant expression: math is resolved at compile time
+
+In these cases, the compiler knows exactly what x and y are, so it can:
+
+Replace every use of x or y with their actual values,
+Avoid creating real variables in memory — it just hardcodes the values.
+
+🔸 What is an initializer?
+An initializer is the value or expression you assign to a variable when you define it.
+
+`const int size = 512;` // "512" is the initializer
+
+If the initializer is a constant expression, the compiler treats size as a compile-time constant.
+
+🔸 Why is this important for const variables?
+When the initializer is a constant expression, like 512, the compiler can optimize your code and give the variable internal linkage by default. That means:
+
+The variable stays private to its file.
+If you use it in other files, you must define it again in each file (with the same value).
+But if the initializer is not a constant expression, like:
+
+`const int bufSize = fcn();` // ❌ not a constant expression — depends on a function at runtime
+
+Then:
+
+The compiler cannot replace bufSize with a value during compilation. The variable must actually exist at runtime.
+
+You must use **extern** to make sure only one instance exists across files.
+
+// file_1.cc defines and initializes a const that is accessible to other files
+`extern const int bufSize = fcn();`
+// file_1.h
+`extern const int bufSize;` // same bufSize as defined in file_1.cc
+
+What not to do:
+
+// file_1.h
+`const int bufSize = 512;`  // This defines a separate const in every file that includes this header!
+
+This leads to multiple definitions and linker errors because each .cpp file gets its own bufSize.
+
+# References to const
+
+We can bind a reference to an object of a const type. To do so we use a reference to const, which is a reference that refers to a const type. Unlike an ordinary reference, a reference to const cannot be used to change the object to which the reference is bound:
+
+`const int ci = 1024;`
+`const int &r1 = ci;` // ok: both reference and underlying object are const
+`r1 = 42;` // error: r1 is a reference to const
+`int &r2 = ci;` // error: nonconst reference to a const object
+
+## Initialization and References to const
 
 # Dealing with types
 
@@ -272,13 +486,12 @@ When we define several variables in the same statement, it is important to remem
 
 ## The decltype Type Specifier
 
-The C++11introduced a second type specifier, `decltype`, which returns the type of its operand.
+The C++11 introduced a second type specifier, `decltype`, which returns the type of its operand.
 
 The compiler analyzes the expression to determine its type but does not evaluate the expression:
 `decltype(f()) sum = x; `// sum has whatever type f returns
 
-The way `decltype`handles top-level const and references differs subtly from
-the way `auto` does. When the expression to which we apply decltype is a variable, decltype returns the type of that variable, including top-level const and references:
+The way `decltype`handles top-level const and references differs subtly from the way `auto` does. When the expression to which we apply decltype is a variable, decltype returns the type of that variable, including top-level const and references:
 
 `const int ci = 0, &cj = ci;`
 `decltype(ci) x = 0;` // `x` has type `const int`
