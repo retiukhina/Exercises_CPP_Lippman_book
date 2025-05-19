@@ -332,6 +332,62 @@ We can bind a reference to an object of a const type. To do so we use a referenc
 
 ## Initialization and References to const
 
+There are two exceptions to the rule that the type of a reference must match the type of the object to which it refers. The first exception is that we can initialize a reference to const from any expression that can be converted to the type of the reference. In particular, we can bind a reference to const to a nonconst object, a literal, or a more general expression:
+
+`int i = 42;`
+`const int &r1 = i;` //we can bind a const int& to a plain int object
+`const int &r2 = 42; ` // ok: r2 is a reference to const
+`const int &r3 = r1 * 2;` // ok: r3 is a reference to const
+`int &r4 = r * 2;` //error: r4 is a plain, nonconst reference
+
+## A Reference to const May Refer to an Object That Is Not const
+
+It is important to realize that a reference to const restricts only what we can do
+through that reference. Binding a reference to const to an object says nothing
+about whether the underlying object itself is const. Because the underlying object
+might be nonconst, it might be changed by other means:
+
+int i = 42;
+int &r1 = i; //r1 bound to i
+const int &r2 = i; //r2 also bound to i; but cannot be used to change i
+r1 = 0; //r1 is not const; i is now 0
+r2 = 0; //error: r2 is a reference to const
+
+# Pointers and const
+
+## const Pointers
+
+Like any other const object, a const pointer must be initialized, and once initialized, its value (i.e., the address that it holds) may not be changed. We indicate that the pointer is const by putting the const after the *. This placement indicates that it is the pointer, not the pointed-to type, that is const:
+
+`int errNumb = 0;`
+`int *const curErr = &errNumb;` // curErr will always point to errNumb
+`const double pi = 3.14159;`
+`const double *const pip = &pi;` // pip is a const pointer to a const object
+
+`*pip = 2.72;` // error: pip is a pointer to const
+// if the object to which curErr points (i.e., errNumb) is nonzero
+`if (*curErr) {`
+`errorHandler();`
+`*curErr = 0;` // ok: reset the value of the object to which curErr is bound
+`}`
+
+# Top-Level const
+
+We can talk independently about whether a pointer is const and whether the objects to which it can point are const. We use the term `top-level const` to indicate that the pointer itself is a const. When a pointer can point to a const object, we refer to that const as a `low-level const`.
+
+More generally, top-level const indicates that an object itself is const. Top-
+level const can appear in any object type, i.e., one of the built-in arithmetic types,
+a class type, or a pointer type. Low-level const appears in the base type of com-
+pound types such as pointers or references. Note that pointer types, unlike most
+other types, can have both top-level and low-level const independently:
+
+`int i = 0;`
+`int *const p1 = &i;` // we can’t change the value of p1; const is top-level
+`const int ci = 42;` // we cannot change ci; const is top-level
+`const int *p2 = &ci;` // we can change p2; const is low-level
+`const int *const p3 = p2;` // right-most const is top-level, left-most is not
+`const int &r = ci;` // const in reference types is always low-level
+
 # Dealing with types
 
 ## Type Aliases
