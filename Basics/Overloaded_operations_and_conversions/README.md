@@ -150,4 +150,36 @@ public:
     }
 };
 
-When we overload an arithmetic or bitwise operator, then its usually good idea to overload compound-assignment operators like +=, -=, *=, etc., which combine an operation and assignment, because developers expect them behave the same way.
+
+## Overloading the Input Operator >>
+
+Usually:
+
+- the first parameter of an input operator is a reference to the stream from
+which it is to read, and the second parameter is a reference to the nonconst object into which to read.
+- the operator returns a reference to its given stream.
+- the second parameter must be nonconst because the purpose of an input
+operator is to read data into this object.
+
+## Arithmetic and Relational Operators
+
+Ordinarily, we define the arithmetic and relational operators as nonmember functions in order to make the operator more flexible and to allow conversions for either the left- or right-hand operand if needed.
+
+These operators shouldn’t need to change the state of either operand, so the parameters are ordinarily references to const. Such way we dont copy thr whole object (which takes less cpase and work faster) and we dont modify the object.
+
+An arithmetic operator usually generates a new value that is the result of a
+computation on its two operands. That value is distinct from either operand and is calculated in a local variable. The operation returns a copy of this local as its result.
+
+Classes that define an arithmetic operator generally define the  Corresponding compound assignment operator as well. When a class has both operators, it is usually more efficient to define the arithmetic operator to use compound assignment:
+
+// assumes that both objects refer to the same book
+Sales_data
+operator+(const Sales_data &lhs, const Sales_data &rhs)
+{
+    Sales_data sum = lhs; // copy data members from lhs into sum
+    sum += rhs;
+    // add rhs into sum
+    return sum;
+}
+
+## Equality Operators
